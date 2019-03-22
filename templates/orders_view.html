@@ -1,0 +1,27 @@
+{% extends "__base_template.html" %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Заказ № {{ orders.id }}</h5>
+        <div class="card-text mb-1">
+            Шапки x {{ orders.hat }}
+        </div>
+        <div class="card-text mb-1">
+            Шарфы х {{ orders.scarve }}
+        </div>
+        <div class="card-text mb-1">
+            Сумма:
+            {{ orders.sum }}
+        </div>
+        {% if orders.result == True%}
+        Статус: оплачено
+        {% endif %}
+        {% if not orders.result %}
+        Статус: не оплачено
+        <a class="btn btn-outline-success" href="/pay/{{ orders.id }}">Оплатить</a>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

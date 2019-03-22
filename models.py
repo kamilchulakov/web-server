@@ -92,3 +92,62 @@ class Matches(db.Model):
             'content': self.content,
             'user_id': self.user_id
         }
+
+
+class Orders(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    scarve = db.Column(db.String(80), unique=False, nullable=False)
+    hat = db.Column(db.String(80), unique=False, nullable=False)
+    sum = db.Column(db.String(80), unique=False, nullable=False)
+    result = db.Column(db.Boolean, unique=False, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user = db.relationship('User', backref=db.backref('orders_list', lazy=True))
+
+    def __repr__(self):
+        return '<Order {} {} {}>'.format(self.id, self.hat, self.scarve)
+
+    @staticmethod
+    def add(hat, scarve, user):
+        sum = hat * 50 + scarve * 100
+        orders = Orders(hat=hat, scarve=scarve, result=False, sum=sum, user=user)
+        db.session.add(orders)
+        db.session.commit()
+        return orders
+
+    @staticmethod
+    def delete(obj):
+        db.session.delete(obj)
+        db.session.commit()
+
+    @property
+    def serialize(self):
+        """Return object data in easily serializable format"""
+        return {
+            'id': self.id,
+            'hat': self.hat,
+            'scarve': self.scarve,
+            'result': self.result
+        }
+
+
+#class Storage(db.Model):
+#    scarve = db.Column(db.String(80), unique=False, nullable=False)
+#    hat = db.Column(db.String(80), unique=False, nullable=False)
+#
+#    def __repr__(self):
+#        return '<Storage {} {} >'.format(self.hat, self.scarve)
+#
+#    #@staticmethod
+#    #def buy(hat, scarve, user):
+#    #    cursor = db.cursor()
+#    #    cursor.execute("UPDATE storage SET hat = replace(hat, storage.hat - <hat>, storage)")
+#    #    db.session.commit()
+#
+#    @property
+#    def serialize(self):
+#        """Return object data in easily serializable format"""
+#        return {
+#            'hat': self.hat,
+#            'scarve': self.scarve,
+#        }
+#

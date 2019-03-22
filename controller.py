@@ -6,7 +6,7 @@ import extra.auth as auth
 from api.v1 import init as init_api_v1
 from forms import *
 
-from models import User, News
+from models import User, News, Orders
 
 
 def init_route(app, db):
@@ -145,14 +145,47 @@ def init_route(app, db):
 
     @app.route('/shop', methods=['GET', 'POST'])
     def make_shopping():
+        if not auth.is_authorized():
+            return redirect('/login')
         form = ShopForm()
-        if form.validate_on_submit():
+        if any([form.scarves.data, form.hat.data]) != 0:
             scarves = form.scarves.data
             hat = form.hat.data
-            #Order.add(scarves=scarves, hat=hat, user=auth.get_user())
-            #return redirect('/payment/')
+            Orders.add(hat=hat, scarve=scarves, user=auth.get_user())
+            return redirect('/')
         return render_template(
             'shop.html',
             title="Магазин",
             form=form)
 
+    @app.route('/orders/<int:id>')
+    def orders_view(id: int):
+        if not auth.is_authorized():
+            return redirect('/login')
+
+        orders = Orders.query.filter_by(id=id).first()
+        user = orders.user
+        if auth.get_user().id != user.id:
+            abort(403)
+        return render_template(
+            'orders_view.html',
+            title='Заказ № ' + str(orders.id),
+            orders=orders,
+            user=user
+        )
+
+    @app.route('/pay/<int:id>')
+    def orders_pay(id: int):
+        if not auth.is_authorized():
+            return redirect('/login')
+
+        orders = Orders.query.filter_by(id=id).first()
+        user = orders.user
+        if auth.get_user().id != user.id:
+            abort(403)
+        orders.result = True
+        db.session.commit()
+        return render_template(
+            'orders_pay.html',
+            orders=orders
+        )

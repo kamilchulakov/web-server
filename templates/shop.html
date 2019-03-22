@@ -9,9 +9,6 @@
         enctype="multipart/form-data"
         class="card"
 >
-    {% if has_error %}
-        <div class="alert alert-danger">Пользователь с таким именем уже существует</div>
-        {% endif %}
     <div class="card-body">
         <div class="form-group">
             <label for="{{ form.scarves.id }}">{{ form.scarves.label }}</label>
