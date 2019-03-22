@@ -152,7 +152,7 @@ def init_route(app, db):
             scarves = form.scarves.data
             hat = form.hat.data
             Orders.add(hat=hat, scarve=scarves, user=auth.get_user())
-            return redirect('/')
+            return redirect('/orders/1')
         return render_template(
             'shop.html',
             title="Магазин",
