@@ -8,8 +8,6 @@ from forms import *
 
 from models import User, News, Orders
 
-z = 0
-
 
 def init_route(app, db):
 
@@ -155,8 +153,8 @@ def init_route(app, db):
             scarves = form.scarves.data
             hat = form.hat.data
             Orders.add(hat=hat, scarve=scarves, user=auth.get_user())
-            z += 1
-            return redirect('/orders/{}'.format(z))
+            orders = Orders.query.filter_by(hat=hat, scarve=scarves, user=auth.get_user()).first()
+            return redirect('/orders/{}'.format(orders.id))
         return render_template(
             'shop.html',
             title="Магазин",
@@ -193,3 +191,8 @@ def init_route(app, db):
             'orders_pay.html',
             orders=orders
         )
+
+    @app.route('/about')
+    def about():
+       return render_template(
+            'about.html')

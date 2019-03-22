@@ -126,7 +126,8 @@ class Orders(db.Model):
             'id': self.id,
             'hat': self.hat,
             'scarve': self.scarve,
-            'result': self.result
+            'result': self.result,
+            'user': self.user
         }
 
 
