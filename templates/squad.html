@@ -1,0 +1,52 @@
+{% extends "__base_template.html" %}
+{% block content %}
+
+<h1>Наш основной состав</h1>
+
+<div id="air" style="width: 500px; height: 400px;"></div>
+<table border="1">
+   <tr>
+    <th>Имя Фамилия</th>
+    <th>Страна</th>
+    <th>Дата рождения</th>
+    <th>Позиция</th>
+   </tr>
+   <tr><td>Кепа Аррисабалага</td><td>Испания</td><td>3 октября 1994 </td><td>ВРТ</td></tr>
+   <tr><td>Антонио Рюдигер</td><td>Германия</td><td>3 марта 1993</td><td>ЦЗ</td></tr>
+   <tr><td>Давид Луиз</td><td>Бразилия</td><td>22 апреля 1987</td><td>ЦЗ</td></tr>
+   <tr><td>Маркос Алонсо</td><td>Испания</td><td>28 декабря 1990 </td><td>ЛЗ</td></tr>
+   <tr><td>Сесар Аспиликуэта</td><td>Испания</td><td>28 августа 1989</td><td>ПЗ</td></tr>
+   <tr><td>Росс Баркли</td><td>Англия</td><td>5 декабря 1993</td><td>ЦП</td></tr>
+   <tr><td>Жоржиньо Фрелло</td><td>Италия</td><td>20 декабря 1991</td><td>ЦОП</td></tr>
+   <tr><td>Нголо Канте</td><td>Франция</td><td>29 марта 1991</td><td>ЦП</td></tr>
+   <tr><td>Педро</td><td>Испания</td><td>28 июля 1987</td><td>ПФА</td></tr>
+   <tr><td>Эден Азар</td><td>Бельгия</td><td>7 января 1991</td><td>ЛФА</td></tr>
+   <tr><td>Гонсало Игуаин</td><td>Аргентина</td><td>10 декабря 1987</td><td>ФРВ</td></tr>
+  </table>
+<script src="https://www.google.com/jsapi"></script>
+
+<script>
+   google.load("visualization", "1", {packages:["corechart"]});
+   google.setOnLoadCallback(drawChart);
+   function drawChart() {
+    var data = google.visualization.arrayToDataTable([
+     ['Страна', 'Игроки'],
+     ['Испания', 4],
+     ['Бразилия', 1],
+     ['Аргентина', 1],
+     ['Франция', 1],
+     ['Италия', 1],
+     ['Англия', 1],
+     ['Германия' 1],
+     ['Бельгия', 1]
+    ]);
+    var options = {
+     title: 'Состав воздуха',
+     is3D: true,
+     pieResidueSliceLabel: 'Остальное'
+    };
+    var chart = new google.visualization.PieChart(document.getElementById('air'));
+     chart.draw(data, options);
+   }
+  </script>
+{% endblock %}

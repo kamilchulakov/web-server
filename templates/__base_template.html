@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+          crossorigin="anonymous"
+    >
+    <title>{{title}}</title>
+    <style>
+    body {
+      background-repeat: no-repeat;
+      background-color: #FFFFFF;
+    }
+    </style>
+
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a href="/" class="navbar-brand">Главная</a>
+    <div class="collapse navbar-collapse">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a href="/matches" class="nav-link">Матчи</a>
+            </li>
+            <li class="nav-item">
+                <a href="/shop" class="nav-link">Магазин</a>
+            </li>
+            <li class="nav-item">
+                <a href="/squad" class="nav-link">Состав</a>
+            </li>
+        </ul>
+    </div>
+    {% if auth_user %}
+    {{ auth_user.login }} (<a href="/logout">Выйти</a>)
+    {% else %}
+    <div class="p-3">
+        <a href="/login">Войти</a>
+    </div>
+    <div class="p-3">
+        <a href="/user/create">Зарегистрироваться</a>
+    </div>
+    {% endif %}
+</nav>
+<img src="https://img04.rl0.ru/6041ca302b78352b45ff8c10f36f843a/c600x315/news.rambler.ru/img/2017/07/25163620.516198.2280.png">
+<div class="container pt-5">
+    {% block content %}
+    {% endblock %}
+</div>
+</body>
+</html>
