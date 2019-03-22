@@ -8,6 +8,8 @@ from forms import *
 
 from models import User, News, Orders
 
+z = 0
+
 
 def init_route(app, db):
 
@@ -145,6 +147,7 @@ def init_route(app, db):
 
     @app.route('/shop', methods=['GET', 'POST'])
     def make_shopping():
+        global z
         if not auth.is_authorized():
             return redirect('/login')
         form = ShopForm()
@@ -152,7 +155,8 @@ def init_route(app, db):
             scarves = form.scarves.data
             hat = form.hat.data
             Orders.add(hat=hat, scarve=scarves, user=auth.get_user())
-            return redirect('/orders/1')
+            z += 1
+            return redirect('/orders/{}'.format(z))
         return render_template(
             'shop.html',
             title="Магазин",
