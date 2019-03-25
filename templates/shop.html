@@ -2,7 +2,9 @@
 
 {% block content %}
 
-<h1>Рад тебя здесь увидеть. Выбери товары</h1>
+<h1>Наши товары подлежат обмену и возврату.</h1>
+<p>Для этого просто напиши отрицательное число</p>
+<h1>Выбери товары</h1>
 <form
         action="/shop"
         method="post"
@@ -13,12 +15,12 @@
         <div class="form-group">
             <label for="{{ form.scarves.id }}">{{ form.scarves.label }}</label>
             {{ form.scarves(class_="form-control") }}
-            <img src="https://besplatka.ua/aws/31/23/69/43/sharf-trikotazhnyi-chelsea-football-club-chelsi-photo-61b0.jpg">
+            <img src="https://besplatka.ua/aws/31/23/69/43/sharf-trikotazhnyi-chelsea-football-club-chelsi-photo-61b0.jpg" height='150px' width="150px">
         </div>
         <div class="form-group">
             <label for="{{ form.hat.id }}">{{ form.hat.label }}</label>
             {{ form.hat(class_="form-control") }}
-            <img src="http://www.mmsport.ru/media/catalog/product/cache/3/image/9df78eab33525d08d6e5fb8d27136e95/a/9/a98712-chelsea-woolie-blue.jpg">
+            <img src="http://www.mmsport.ru/media/catalog/product/cache/3/image/9df78eab33525d08d6e5fb8d27136e95/a/9/a98712-chelsea-woolie-blue.jpg" width="150px" height='150px'>
         </div>
         {{ form.submit(class_="btn btn-primary") }}
     </div>

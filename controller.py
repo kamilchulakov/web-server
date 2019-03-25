@@ -43,11 +43,11 @@ def init_route(app, db):
             title="Главная"
         )
 
-    @app.route('/squad')
+    @app.route('/last_match')
     def view_squad():
         return render_template(
-            'squad.html',
-            title="Состав"
+            'last_match.html',
+            title="Последний матч"
         )
 
     @app.route('/login', methods=['GET', 'POST'])
@@ -145,7 +145,6 @@ def init_route(app, db):
 
     @app.route('/shop', methods=['GET', 'POST'])
     def make_shopping():
-        global z
         if not auth.is_authorized():
             return redirect('/login')
         form = ShopForm()
