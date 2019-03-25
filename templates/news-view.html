@@ -11,7 +11,30 @@
         {% if user %}
         Автор: {{ user.username }}
         {% endif %}
+
+    </div>
+</div>
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">Комментарии
+        {% if auth_user.id %}
+        <a href="/news/{{ news.id }}/comment" class="btn btn-outline-primary">Комментировать</a></h4>
+        {% endif %}
+        {% if comments_list %}
+        <ul class="card-text">
+            {% for comment in comments_list %}
+            <li>{% if auth_user and auth_user.id == 1 %}
+                (<a href="/news/delete/{{ news.id }}">удалить</a>)
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        Нет комментариев
+        {% endif %}
+
     </div>
 </div>
 
 {% endblock %}
+
