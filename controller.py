@@ -6,7 +6,7 @@ import extra.auth as auth
 from api.v1 import init as init_api_v1
 from forms import *
 
-from models import User, News, Orders
+from models import User, News, Orders, Comments
 
 
 def init_route(app, db):
@@ -43,11 +43,11 @@ def init_route(app, db):
             title="Главная"
         )
 
-    @app.route('/last_match')
+    @app.route('/squad')
     def view_squad():
         return render_template(
-            'last_match.html',
-            title="Последний матч"
+            'squad.html',
+            title="Состав"
         )
 
     @app.route('/login', methods=['GET', 'POST'])
@@ -118,6 +118,8 @@ def init_route(app, db):
         if not auth.is_authorized():
             return redirect('/login')
         news = News.query.filter_by(id=id).first()
+        comments = Comments
+        comments_list = Comments.query.filter_by(newsid=id)
         if not news:
             abort(404)
 
@@ -126,8 +128,29 @@ def init_route(app, db):
             'news-view.html',
             title='Новость - ' + news.title,
             news=news,
-            user=user
+            user=user,
+            comments_list=comments_list
         )
+
+    @app.route('/news/<int:newsid>/comment', methods=['GET', 'POST'])
+    def add_comment(newsid: int):
+        if not auth.is_authorized():
+            return redirect('/login')
+        form = CommentCreateForm
+        if form.validate_on_submit():
+            title = form.title.data
+            content = form.content.data
+
+            Comments.add(title=title, content=content, news_id=newsid, user=auth.get_user())
+            return redirect('/')
+        return render_template(
+            'comment-create.html',
+            title='Создать новость',
+            form=form,
+            news_id=newsid
+        )
+
+
 
     @app.route('/news/delete/<int:id>')
     def news_delete(id: int):
@@ -145,6 +168,7 @@ def init_route(app, db):
 
     @app.route('/shop', methods=['GET', 'POST'])
     def make_shopping():
+        global z
         if not auth.is_authorized():
             return redirect('/login')
         form = ShopForm()
