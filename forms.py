@@ -8,6 +8,12 @@ class NewsCreateForm(FlaskForm):
     content = TextAreaField('Текст новости', validators=[DataRequired()])
     picture = TextAreaField('Картинка новости', validators=[DataRequired()])
     submit = SubmitField('Добавить')
+    
+   
+class CommentCreateForm(FlaskForm):
+    title = StringField('Заголовок комментария', validators=[DataRequired()])
+    content = TextAreaField('Текст комментария', validators=[DataRequired()])
+    submit = SubmitField('Добавить')
 
 
 class LoginForm(FlaskForm):
