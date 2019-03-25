@@ -58,6 +58,19 @@ class News(db.Model):
             'picture': self.picture,
             'user_id': self.user_id
         }
+    
+    
+ class Comments(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(80), unique=False, nullable=False)
+    content = db.Column(db.String(80), unique=False, nullable=True)  # пусть текст можно будет оставить пустым
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user = db.relationship('User', backref=db.backref('_list', lazy=True))
+    news_id = db.Column(db.Integer, db.ForeignKey('news.id'), nullable=False)
+    news = db.relationship('News', backref=db.backref('news_list', lazy=True))
+
+    def __repr__(self):
+        return '<Comment {} {} {} {}>'.format(self.id, self.title, self.user_id, self.news_id)
 
 
 class Matches(db.Model):
