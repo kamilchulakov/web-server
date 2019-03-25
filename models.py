@@ -71,6 +71,28 @@ class News(db.Model):
 
     def __repr__(self):
         return '<Comment {} {} {} {}>'.format(self.id, self.title, self.user_id, self.news_id)
+    @staticmethod
+    def add(title, content, news, user):
+        comment = Comments(title=title, content=content, news=news, user=user)
+        db.session.add(comment)
+        db.session.commit()
+        return comment
+
+    @staticmethod
+    def delete(obj):
+        db.session.delete(obj)
+        db.session.commit()
+
+    @property
+    def serialize(self):
+        """Return object data in easily serializable format"""
+        return {
+            'id': self.id,
+            'title': self.title,
+            'content': self.content,
+            'news_id': self.news_id,
+            'user_id': self.user_id
+        }
 
 
 class Matches(db.Model):
