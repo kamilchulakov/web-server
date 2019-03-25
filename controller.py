@@ -119,7 +119,7 @@ def init_route(app, db):
             return redirect('/login')
         news = News.query.filter_by(id=id).first()
         comments = Comments
-        comments_list = Comments.query.filter_by(newsid=id)
+        comments_list = Comments.query.filter_by(news_id=id)
         if not news:
             abort(404)
 
@@ -132,25 +132,22 @@ def init_route(app, db):
             comments_list=comments_list
         )
 
-    @app.route('/news/<int:newsid>/comment', methods=['GET', 'POST'])
-    def add_comment(newsid: int):
+    @app.route('/news/<int:news_id>/comment', methods=['GET', 'POST'])
+    def add_comment(news_id: int):
         if not auth.is_authorized():
             return redirect('/login')
-        form = CommentCreateForm
+        form = CommentCreateForm()
         if form.validate_on_submit():
             title = form.title.data
             content = form.content.data
-
-            Comments.add(title=title, content=content, news_id=newsid, user=auth.get_user())
+            Comments.add(title=title, content=content, news=news_id, user=auth.get_user())
             return redirect('/')
         return render_template(
             'comment-create.html',
             title='Создать новость',
             form=form,
-            news_id=newsid
+            news_id=news_id
         )
-
-
 
     @app.route('/news/delete/<int:id>')
     def news_delete(id: int):
@@ -217,5 +214,5 @@ def init_route(app, db):
 
     @app.route('/about')
     def about():
-       return render_template(
+        return render_template(
             'about.html')

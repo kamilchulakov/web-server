@@ -56,43 +56,43 @@ class News(db.Model):
             'title': self.title,
             'content': self.content,
             'picture': self.picture,
-            'user_id': self.user_id
-        }
+            'user_id': self.user_id}
     
     
- class Comments(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(80), unique=False, nullable=False)
-    content = db.Column(db.String(80), unique=False, nullable=True)  # пусть текст можно будет оставить пустым
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    user = db.relationship('User', backref=db.backref('_list', lazy=True))
-    news_id = db.Column(db.Integer, db.ForeignKey('news.id'), nullable=False)
-    news = db.relationship('News', backref=db.backref('news_list', lazy=True))
+class Comments(db.Model):
+   id = db.Column(db.Integer, primary_key=True)
+   title = db.Column(db.String(80), unique=False, nullable=False)
+   content = db.Column(db.String(80), unique=False, nullable=True)  # пусть текст можно будет оставить пустым
+   user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+   user = db.relationship('User', backref=db.backref('_list', lazy=True))
+   news_id = db.Column(db.Integer, db.ForeignKey('news.id'), nullable=False)
+   news = db.relationship('News', backref=db.backref('news_list', lazy=True))
 
-    def __repr__(self):
-        return '<Comment {} {} {} {}>'.format(self.id, self.title, self.user_id, self.news_id)
-    @staticmethod
-    def add(title, content, news, user):
-        comment = Comments(title=title, content=content, news=news, user=user)
-        db.session.add(comment)
-        db.session.commit()
-        return comment
+   def __repr__(self):
+       return '<Comment {} {} {} {}>'.format(self.id, self.title, self.user_id, self.news_id)
 
-    @staticmethod
-    def delete(obj):
-        db.session.delete(obj)
-        db.session.commit()
+   @staticmethod
+   def add(title, content, news, user):
+       comment = Comments(title=title, content=content, news_id=news, user_id=user)
+       db.session.add(comment)
+       db.session.commit()
+       return comment
 
-    @property
-    def serialize(self):
-        """Return object data in easily serializable format"""
-        return {
-            'id': self.id,
-            'title': self.title,
-            'content': self.content,
-            'news_id': self.news_id,
-            'user_id': self.user_id
-        }
+   @staticmethod
+   def delete(obj):
+       db.session.delete(obj)
+       db.session.commit()
+
+   @property
+   def serialize(self):
+       """Return object data in easily serializable format"""
+       return {
+           'id': self.id,
+           'title': self.title,
+           'content': self.content,
+           'news_id': self.news_id,
+           'user_id': self.user_id
+       }
 
 
 class Matches(db.Model):
