@@ -158,10 +158,10 @@ def init_route(app, db):
             abort(403)
         News.delete(news)
         return redirect('/news')
-
+    
     @app.route('/matches')
     def show_matches():
-        abort(403)
+        return 'Матчи будут скоро добавлены'
 
     @app.route('/shop', methods=['GET', 'POST'])
     def make_shopping():
