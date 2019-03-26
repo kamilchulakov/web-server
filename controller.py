@@ -92,6 +92,13 @@ def init_route(app, db):
             form=form,
             has_error=has_error
         )
+    
+        @app.route('/last_match')
+            def view_last_match():
+                return render_template(
+                    'last_match.html',
+                    title="Последний матч"
+                )
 
     @app.route('/news/create', methods=['GET', 'POST'])
     def news_create_form():
