@@ -126,12 +126,11 @@ def init_route(app, db):
             return redirect('/login')
         news = News.query.filter_by(id=id).first()
         comments_list = Comments.query.filter_by(news_id=id)
-        user = news.user
         return render_template(
             'news-view.html',
             title='Новость - ' + news.title,
             news=news,
-            user=user,
+            user=news.user,
             comments_list=comments_list
         )
 
@@ -178,7 +177,6 @@ def init_route(app, db):
 
     @app.route('/shop', methods=['GET', 'POST'])
     def make_shopping():
-        global z
         if not auth.is_authorized():
             return redirect('/login')
         form = ShopForm()
