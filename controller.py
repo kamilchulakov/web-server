@@ -122,6 +122,7 @@ def init_route(app, db):
 
     @app.route('/news/<int:id>')
     def news_view(id: int):
+        print(id)
         if not auth.is_authorized():
             return redirect('/login')
         news = News.query.filter_by(id=id).first()
