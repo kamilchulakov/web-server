@@ -8,6 +8,7 @@
             {{ news.content }}
         </div>
         <img src="{{ news.picture }}" class="card-img-top" alt="...">
+
         {% if user %}
         Автор: {{ user.username }}
         {% endif %}

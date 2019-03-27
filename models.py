@@ -1,4 +1,5 @@
 from dbase import db
+from flask import session
 
 
 class User(db.Model):
@@ -46,6 +47,7 @@ class News(db.Model):
 
     @property
     def serialize(self):
+        """Return object data in easily serializable format"""
         return {
             'id': self.id,
             'title': self.title,
@@ -157,24 +159,44 @@ class Orders(db.Model):
         }
 
 
-#class Storage(db.Model):
-#    scarve = db.Column(db.String(80), unique=False, nullable=False)
-#    hat = db.Column(db.String(80), unique=False, nullable=False)
-#
-#    def __repr__(self):
-#        return '<Storage {} {} >'.format(self.hat, self.scarve)
-#
-#    #@staticmethod
-#    #def buy(hat, scarve, user):
-#    #    cursor = db.cursor()
-#    #    cursor.execute("UPDATE storage SET hat = replace(hat, storage.hat - <hat>, storage)")
-#    #    db.session.commit()
-#
-#    @property
-#    def serialize(self):
-#        """Return object data in easily serializable format"""
-#        return {
-#            'hat': self.hat,
-#            'scarve': self.scarve,
-#        }
-#
+class Storage(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    scarve = db.Column(db.String(80), unique=False, nullable=False)
+    hat = db.Column(db.String(80), unique=False, nullable=False)
+
+    def __repr__(self):
+        return '<Storage {} {} >'.format(self.hat, self.scarve)
+
+    @staticmethod
+    def add(hat, scarve):
+        storage = Storage(hat=hat, scarve=scarve)
+        db.session.add(storage)
+        db.session.commit()
+        return storage
+
+    @staticmethod
+    def buy(hat, scarve):
+        st = Storage.query.filter_by(id=1).first()
+        setattr(st, 'hat', int(st.hat) - hat)
+        setattr(st, 'scarve', int(st.scarve) - scarve)
+        db.session.commit()
+        return hat
+
+    @staticmethod
+    def get(hat, scarve):
+        st = Storage.query.filter_by(id=1).first()
+        setattr(st, 'hat', int(st.hat) + hat)
+        setattr(st, 'scarve', int(st.scarve) + scarve)
+        db.session.commit()
+        return hat
+
+
+    @property
+    def serialize(self):
+        """Return object data in easily serializable format"""
+        return {
+            'id': self.id,
+            'hat': self.hat,
+            'scarve': self.scarve,
+        }
+

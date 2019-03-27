@@ -6,7 +6,7 @@ import extra.auth as auth
 from api.v1 import init as init_api_v1
 from forms import *
 
-from models import User, News, Orders, Comments
+from models import User, News, Orders, Comments, Storage
 
 
 def init_route(app, db):
@@ -38,6 +38,7 @@ def init_route(app, db):
     @app.route('/install')
     def install():
         db.create_all()
+        Storage.add(0, 0)
         return render_template(
             'install-success.html',
             title="Главная"
@@ -178,15 +179,23 @@ def init_route(app, db):
 
     @app.route('/shop', methods=['GET', 'POST'])
     def make_shopping():
-        if not auth.is_authorized():
+        if not auth.is_authorized() or not auth.get_user():
             return redirect('/login')
         form = ShopForm()
         if any([form.scarves.data, form.hat.data]) != 0:
             scarves = form.scarves.data
             hat = form.hat.data
-            Orders.add(hat=hat, scarve=scarves, user=auth.get_user())
-            orders = Orders.query.filter_by(hat=hat, scarve=scarves, user=auth.get_user()).first()
-            return redirect('/orders/{}'.format(orders.id))
+            st = Storage.query.filter_by(id=1).first()
+            if int(st.hat) > hat and int(st.scarve) > scarves:
+                Orders.add(hat=hat, scarve=scarves, user=auth.get_user())
+                orders = Orders.query.filter_by(hat=hat)[-1]
+                return redirect('/orders/{}'.format(orders.id))
+            else:
+                return render_template(
+                    'shop.html',
+                    title="Магазин",
+                    form=form,
+                    alert=True)
         return render_template(
             'shop.html',
             title="Магазин",
@@ -218,6 +227,7 @@ def init_route(app, db):
         if auth.get_user().id != user.id:
             abort(403)
         orders.result = True
+        Storage.buy(int(orders.hat), int(orders.scarve))
         db.session.commit()
         return render_template(
             'orders_pay.html',
@@ -228,3 +238,12 @@ def init_route(app, db):
     def about():
         return render_template(
             'about.html')
+
+    @app.route('/storage/<int:hats>&<int:scarves>')
+    def add_values(hats: int, scarves: int):
+        Storage.get(hats, scarves)
+        return render_template(
+            'install-success.html',
+            title="Главная"
+        )
+
