@@ -23,8 +23,11 @@
         {% if comments_list %}
         <ul class="card-text">
             {% for comment in comments_list %}
-            <li>{% if auth_user and auth_user.id == 1 %}
-                (<a href="/news/delete/{{ news.id }}">удалить</a>)
+            <li><h5>{{ comment.title }}</h5>
+                <em>
+                    {{ comment.content }}</em>
+                {% if auth_user.id == 1 %}
+                (<a href="/comment/delete/{{ comment.id }}">удалить</a>)
                 {% endif %}
             </li>
             {% endfor %}
@@ -32,7 +35,6 @@
         {% else %}
         Нет комментариев
         {% endif %}
-
     </div>
 </div>
 

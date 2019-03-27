@@ -93,12 +93,12 @@ def init_route(app, db):
             has_error=has_error
         )
     
-        @app.route('/last_match')
-            def view_last_match():
-                return render_template(
-                    'last_match.html',
-                    title="Последний матч"
-                )
+    @app.route('/last_match')
+    def view_last_match():
+        return render_template(
+            'last_match.html',
+                title="Последний матч"
+        )
 
     @app.route('/news/create', methods=['GET', 'POST'])
     def news_create_form():
@@ -125,11 +125,7 @@ def init_route(app, db):
         if not auth.is_authorized():
             return redirect('/login')
         news = News.query.filter_by(id=id).first()
-        comments = Comments
         comments_list = Comments.query.filter_by(news_id=id)
-        if not news:
-            abort(404)
-
         user = news.user
         return render_template(
             'news-view.html',
@@ -147,8 +143,8 @@ def init_route(app, db):
         if form.validate_on_submit():
             title = form.title.data
             content = form.content.data
-            Comments.add(title=title, content=content, news=news_id, user=auth.get_user())
-            return redirect('/')
+            Comments.add(title=title, content=content, news=news_id)
+            return redirect('/news/{}'.format(news_id))
         return render_template(
             'comment-create.html',
             title='Создать новость',
@@ -165,7 +161,17 @@ def init_route(app, db):
             abort(403)
         News.delete(news)
         return redirect('/news')
-    
+
+    @app.route('/comment/delete/<int:id>')
+    def coms_delete(id: int):
+        if not auth.is_authorized():
+            return redirect('/login')
+        comments = Comments.query.filter_by(id=id).first()
+        if auth.get_user().id != 1:
+            abort(403)
+        Comments.delete(comments)
+        return redirect('/')
+
     @app.route('/matches')
     def show_matches():
         return 'Матчи будут скоро добавлены'
