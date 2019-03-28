@@ -31,4 +31,11 @@ class UserCreateForm(FlaskForm):
 class ShopForm(FlaskForm):
     scarves = IntegerField('Шарф', validators=[DataRequired()])
     hat = IntegerField('Шапка', validators=[DataRequired()])
+    shirt = IntegerField('Футболка', validators=[DataRequired()])
+    zna = IntegerField('Значок', validators=[DataRequired()])
+    passport = IntegerField('Обложка', validators=[DataRequired()])
+    rucksack = IntegerField('Рюкзак', validators=[DataRequired()])
+    bre = IntegerField('Брелок', validators=[DataRequired()])
+    flag = IntegerField("Флаг", validators=[DataRequired()])
+    ball = IntegerField('Мяч', validators=[DataRequired()])
     submit = SubmitField('Далее')

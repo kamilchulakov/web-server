@@ -4,12 +4,13 @@
 <div class="card">
     <div class="card-body">
         <h5 class="card-title">Заказ № {{ orders.id }}</h5>
+        {% for i, j in data.items() %}
+        {% if j != '0' %}
         <div class="card-text mb-1">
-            Шапки x {{ orders.hat }}
+            {{ j }} x {{ i }}
         </div>
-        <div class="card-text mb-1">
-            Шарфы х {{ orders.scarve }}
-        </div>
+        {% endif %}
+        {% endfor %}
         <div class="card-text mb-1">
             Сумма:
             {{ orders.sum }}

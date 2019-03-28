@@ -38,7 +38,7 @@ def init_route(app, db):
     @app.route('/install')
     def install():
         db.create_all()
-        Storage.add(0, 0)
+        Storage.add(0, 0, 0, 0, 0, 0, 0, 0, 0)
         User.add('admin', 'admin')
         return render_template(
             'install-success.html',
@@ -166,7 +166,7 @@ def init_route(app, db):
         return redirect('/news')
 
     @app.route('/comment/delete/<int:id>')
-    def coms_delete(id: int):
+    def comments_delete(id: int):
         if not auth.is_authorized():
             return redirect('/login')
         comments = Comments.query.filter_by(id=id).first()
@@ -187,9 +187,19 @@ def init_route(app, db):
         if any([form.scarves.data, form.hat.data]) != 0:
             scarves = form.scarves.data
             hat = form.hat.data
+            shirt = form.shirt.data
+            zna = form.zna.data
+            passport = form.passport.data
+            rucksack = form.rucksack.data
+            bre = form.bre.data
+            flag = form.flag.data
+            ball = form.ball.data
             st = Storage.query.filter_by(id=1).first()
-            if int(st.hat) > hat and int(st.scarve) > scarves:
-                Orders.add(hat=hat, scarve=scarves, user=auth.get_user())
+            if int(st.hat) >= hat and int(st.scarves) >= scarves:
+                Orders.add(hat=hat, scarves=scarves,
+                           shirt=shirt, zna=zna,
+                           passport=passport, rucksack=rucksack,
+                           bre=bre, flag=flag, ball=ball, user=auth.get_user())
                 orders = Orders.query.filter_by(hat=hat)[-1]
                 return redirect('/orders/{}'.format(orders.id))
             else:
@@ -210,13 +220,19 @@ def init_route(app, db):
 
         orders = Orders.query.filter_by(id=id).first()
         user = orders.user
+        data = {"Шарфы": orders.scarves, "Шапки": orders.hat,
+                "Футболки": orders.shirt, "Значки": orders.zna,
+                "Обложки": orders.passport, "Рюкзак": orders.rucksack,
+                "Брелки": orders.bre, "Флаги": orders.flag,
+                "Мячи": orders.ball}
         if auth.get_user().id != user.id:
             abort(403)
         return render_template(
             'orders_view.html',
             title='Заказ № ' + str(orders.id),
             orders=orders,
-            user=user
+            user=user,
+            data=data
         )
 
     @app.route('/pay/<int:id>')
@@ -229,7 +245,10 @@ def init_route(app, db):
         if auth.get_user().id != user.id:
             abort(403)
         orders.result = True
-        Storage.buy(int(orders.hat), int(orders.scarve))
+        Storage.buy(int(orders.hat), int(orders.scarves),
+                    int(orders.shirt), int(orders.zna),
+                     int(orders.passport), int(orders.rucksack),
+                     int(orders.bre), int(orders.flag), int(orders.ball))
         db.session.commit()
         return render_template(
             'orders_pay.html',
@@ -241,9 +260,11 @@ def init_route(app, db):
         return render_template(
             'about.html')
 
-    @app.route('/storage/<int:hats>&<int:scarves>')
-    def add_values(hats: int, scarves: int):
-        Storage.get(hats, scarves)
+    @app.route('/storage/<int:hats>&<int:scarves>&<int:shirt>&<int:zna>&<int:passport>&<int:rucksack>&<int:bre>&<int:flag>&<int:ball>')
+    def add_values(hats: int, scarves: int, shirt: int,
+                   zna: int, passport: int, rucksack: int,
+                   bre: int, flag: int, ball: int):
+        Storage.get(hats, scarves, shirt, zna, passport, rucksack, bre, flag, ball)
         return render_template(
             'install-success.html',
             title="Главная"

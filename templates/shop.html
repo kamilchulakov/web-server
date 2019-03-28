@@ -2,8 +2,7 @@
 
 {% block content %}
 
-<h1>Наши товары подлежат обмену и возврату.</h1>
-<p>Для этого просто напиши отрицательное число</p>
+<h1>Наши товары не подлежат обмену или возврату.</h1>
 <h1>Выбери товары</h1>
 {% if alert %}
 <div class="alert alert-warning" role="alert">
@@ -16,18 +15,133 @@
         enctype="multipart/form-data"
         class="card"
 >
-    <div class="card-body">
+
+    <div class="form-inline">
         <div class="form-group">
-            <label for="{{ form.scarves.id }}">{{ form.scarves.label }}</label>
-            {{ form.scarves(class_="form-control") }}
-            <img src="https://besplatka.ua/aws/31/23/69/43/sharf-trikotazhnyi-chelsea-football-club-chelsi-photo-61b0.jpg" height='150px' width="150px">
+            <table><tr>
+          <td>
+            <img src="https://soccershop.ru/images/catalog/15895_s.gif" height='150px' width="150px">
+          </td>
+          <td>
+            {{ form.scarves(value=0) }}
+          </td>
+        </tr>
+        <tr>
+          <td>Шарф</td>
+          <td>350рублей</td>
+        </tr></table>
+        </div>
+        <div class="form-group" >
+            <table><tr>
+          <td>
+            <img src="http://www.mmsport.ru/media/catalog/product/cache/3/image/9df78eab33525d08d6e5fb8d27136e95/a/9/a98712-chelsea-woolie-blue.jpg" height='150px' width="150px">
+          </td>
+          <td>
+            {{ form.hat(value=0) }}
+          </td>
+        </tr>
+        <tr>
+          <td>Шапка</td>
+          <td>150рублей</td>
+        </tr></table>
+        </div>
+        <div class="form-group" >
+            <table><tr>
+          <td>
+            <img src="https://soccershop.ru/images/catalog/300084_s.gif" height='150px' width="150px">
+          </td>
+          <td>
+            {{ form.shirt(value=0) }}
+          </td>
+        </tr>
+        <tr>
+          <td>Футболка</td>
+          <td>1500рублей</td>
+        </tr></table>
+        </div>
+        <div class="form-group"><table><tr>
+          <td>
+            <img src="https://soccershop.ru/images/catalog/15534_s.gif" height='150px' width="150px">
+          </td>
+          <td>
+            {{ form.zna(value=0) }}
+          </td>
+        </tr>
+        <tr>
+          <td>Значок</td>
+          <td>50рублей</td>
+        </tr></table>
+        </div>
+        <div class="form-group" >
+            <table><tr>
+          <td>
+            <img align="bottom" src="https://soccershop.ru/images/catalog/16419_s.gif" width="150px" height='150px'>
+            </td>
+          <td>
+            {{ form.passport(value=0) }}
+          </td>
+        </tr>
+        <tr>
+          <td>Обложка</td>
+          <td>100рублей</td>
+        </tr></table>
+        </div>
+        <div class="form-group" >
+            <table><tr>
+          <td>
+            <img align="bottom" src="https://soccershop.ru/images/catalog/18354_s.gif" width="150px" height='150px'>
+            </td>
+          <td>
+            {{ form.rucksack(value=0) }}
+          </td>
+        </tr>
+        <tr>
+          <td>Рюкзак</td>
+          <td>750рублей</td>
+        </tr></table>
         </div>
         <div class="form-group">
-            <label for="{{ form.hat.id }}">{{ form.hat.label }}</label>
-            {{ form.hat(class_="form-control") }}
-            <img src="http://www.mmsport.ru/media/catalog/product/cache/3/image/9df78eab33525d08d6e5fb8d27136e95/a/9/a98712-chelsea-woolie-blue.jpg" width="150px" height='150px'>
+            <table><tr>
+          <td>
+            <img src="https://soccershop.ru/images/catalog/18733_s.gif" height='150px' width="150px">
+                </td>
+          <td>
+            {{ form.bre(value=0) }}
+          </td>
+        </tr>
+        <tr>
+          <td>Брелок</td>
+          <td>100рублей</td>
+        </tr></table>
         </div>
-        {{ form.submit(class_="btn btn-primary") }}
+        <div class="form-group" >
+            <table><tr>
+          <td>
+            <img align="bottom" src="https://soccershop.ru/images/catalog/16237_s.gif" width="150px" height='150px'></td>
+          <td>
+            {{ form.flag(value=0) }}
+          </td>
+        </tr>
+        <tr>
+          <td>Флаг</td>
+          <td>250рублей</td>
+        </tr></table>
+        </div>
+        <div class="form-group" >
+            <table><tr>
+          <td>
+            <img align="bottom" src="https://soccershop.ru/images/catalog/18137_s.gif" width="150px" height='150px'></td>
+          <td>
+            {{ form.ball(value=0) }}
+          </td>
+        </tr>
+        <tr>
+          <td>Мяч</td>
+          <td>1000рублей</td>
+        </tr>
+            </table>
+        </div>
     </div>
+    {{ form.submit(class_="btn btn-primary") }}
 </form>
 {% endblock %}

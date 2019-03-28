@@ -69,7 +69,6 @@ class Comments(db.Model):
     title = db.Column(db.String(80), unique=False, nullable=False)
     content = db.Column(db.String(80), unique=False, nullable=True)
     news_id = db.Column(db.Integer, db.ForeignKey('news.id'), nullable=False)
-    news = db.relationship('News', backref=db.backref('comments_list', lazy=True))
 
     def __repr__(self):
         return '<Comments {} {} {}>'.format(self.id, self.title, self.user_id)
@@ -105,7 +104,7 @@ class Matches(db.Model):
     result = db.Column(db.String(80), unique=False, nullable=False)
 
     def __repr__(self):
-        return '<Macthes {} {} {}>'.format(self.id, self.team1, self.team2)
+        return '<Matches {} {} {}>'.format(self.id, self.team1, self.team2)
 
     @staticmethod
     def add(title, content, user):
@@ -132,8 +131,15 @@ class Matches(db.Model):
 
 class Orders(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    scarve = db.Column(db.String(80), unique=False, nullable=False)
+    scarves = db.Column(db.String(80), unique=False, nullable=False)
     hat = db.Column(db.String(80), unique=False, nullable=False)
+    shirt = db.Column(db.String(80), unique=False, nullable=False)
+    zna = db.Column(db.String(80), unique=False, nullable=False)
+    passport = db.Column(db.String(80), unique=False, nullable=False)
+    rucksack = db.Column(db.String(80), unique=False, nullable=False)
+    bre = db.Column(db.String(80), unique=False, nullable=False)
+    flag = db.Column(db.String(80), unique=False, nullable=False)
+    ball = db.Column(db.String(80), unique=False, nullable=False)
     sum = db.Column(db.String(80), unique=False, nullable=False)
     result = db.Column(db.Boolean, unique=False, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -143,9 +149,15 @@ class Orders(db.Model):
         return '<Order {} {} {}>'.format(self.id, self.hat, self.scarve)
 
     @staticmethod
-    def add(hat, scarve, user):
-        sum = hat * 50 + scarve * 100
-        orders = Orders(hat=hat, scarve=scarve, result=False, sum=sum, user=user)
+    def add(hat, scarves, shirt, zna, passport, rucksack, bre, flag, ball, user):
+        print(hat, scarves, shirt, zna, passport, rucksack)
+        sum = hat * 150 + scarves * 350 + shirt * 1500 + zna * 50
+        sum += passport * 100 + rucksack * 750 + bre * 100 + flag * 250 + ball * 1000
+        orders = Orders(hat=hat, scarves=scarves,
+                        shirt=shirt, zna=zna,
+                        passport=passport, rucksack=rucksack,
+                        bre=bre, flag=flag, ball=ball, result=False,
+                        sum=sum, user=user)
         db.session.add(orders)
         db.session.commit()
         return orders
@@ -161,7 +173,8 @@ class Orders(db.Model):
         return {
             'id': self.id,
             'hat': self.hat,
-            'scarve': self.scarve,
+            'scarves': self.scarves,
+            'shirt': self.shirt,
             'result': self.result,
             'user': self.user
         }
@@ -169,35 +182,58 @@ class Orders(db.Model):
 
 class Storage(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    scarve = db.Column(db.String(80), unique=False, nullable=False)
+    scarves = db.Column(db.String(80), unique=False, nullable=False)
     hat = db.Column(db.String(80), unique=False, nullable=False)
+    shirt = db.Column(db.String(80), unique=False, nullable=False)
+    zna = db.Column(db.String(80), unique=False, nullable=False)
+    passport = db.Column(db.String(80), unique=False, nullable=False)
+    rucksack = db.Column(db.String(80), unique=False, nullable=False)
+    bre = db.Column(db.String(80), unique=False, nullable=False)
+    flag = db.Column(db.String(80), unique=False, nullable=False)
+    ball = db.Column(db.String(80), unique=False, nullable=False)
 
     def __repr__(self):
-        return '<Storage {} {} >'.format(self.hat, self.scarve)
+        return '<Storage {} {} >'.format(self.hat, self.scarves)
 
     @staticmethod
-    def add(hat, scarve):
-        storage = Storage(hat=hat, scarve=scarve)
+    def add(hat, scarves, shirt, zna, passport, rucksack, bre, flag, ball):
+        storage = Storage(hat=hat, scarves=scarves,
+                        shirt=shirt, zna=zna,
+                        passport=passport, rucksack=rucksack,
+                        bre=bre, flag=flag, ball=ball)
         db.session.add(storage)
         db.session.commit()
         return storage
 
     @staticmethod
-    def buy(hat, scarve):
+    def buy(hat, scarves, shirt, zna, passport, rucksack, bre, flag, ball):
         st = Storage.query.filter_by(id=1).first()
         setattr(st, 'hat', int(st.hat) - hat)
-        setattr(st, 'scarve', int(st.scarve) - scarve)
+        setattr(st, 'scarves', int(st.scarves) - scarves)
+        setattr(st, 'shirt', int(st.shirt) - shirt)
+        setattr(st, 'zna', int(st.zna) - zna)
+        setattr(st, 'passport', int(st.passport) - passport)
+        setattr(st, 'rucksack', int(st.rucksack) - rucksack)
+        setattr(st, 'bre', int(st.bre) - bre)
+        setattr(st, 'flag', int(st.flag) - flag)
+        setattr(st, 'ball', int(st.ball) - ball)
         db.session.commit()
         return hat
 
     @staticmethod
-    def get(hat, scarve):
+    def get(hat, scarves, shirt, zna, passport, rucksack, bre, flag, ball):
         st = Storage.query.filter_by(id=1).first()
         setattr(st, 'hat', int(st.hat) + hat)
-        setattr(st, 'scarve', int(st.scarve) + scarve)
+        setattr(st, 'scarves', int(st.scarves) + scarves)
+        setattr(st, 'shirt', int(st.shirt) + shirt)
+        setattr(st, 'zna', int(st.zna) + zna)
+        setattr(st, 'passport', int(st.passport) + passport)
+        setattr(st, 'rucksack', int(st.rucksack) + rucksack)
+        setattr(st, 'bre', int(st.bre) + bre)
+        setattr(st, 'flag', int(st.flag) + flag)
+        setattr(st, 'ball', int(st.ball) + ball)
         db.session.commit()
         return hat
-
 
     @property
     def serialize(self):
@@ -205,6 +241,6 @@ class Storage(db.Model):
         return {
             'id': self.id,
             'hat': self.hat,
-            'scarve': self.scarve,
+            'scarves': self.scarves,
         }
 
