@@ -2,6 +2,7 @@
 
 {% block content %}
 {% if news_list %}
+<h1>Наши новости</h1>
 {% for new in news_list %}
 <div class="card" style="width: 18rem;">
   <img src='{{ new.picture }}' class="card-img-top" alt="">
@@ -16,7 +17,7 @@
 </div>
 {% endfor %}
 {% else %}
-Новостей пока нет
+<h1>Новостей пока нет</h1>
 {% endif %}
 {% if auth_user.id == 1 %}
 <a href="/news/create" class="card-link">СОЗДАТЬ</a>

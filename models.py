@@ -29,13 +29,14 @@ class News(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     picture = db.Column(db.String(80), unique=False, nullable=True)
     user = db.relationship('User', backref=db.backref('news_list', lazy=True))
+    viewers = db.Column(db.Integer, unique=False, nullable=True)
 
     def __repr__(self):
         return '<News {} {} {}>'.format(self.id, self.title, self.user_id)
 
     @staticmethod
     def add(title, content, picture, user):
-        news = News(title=title, content=content, picture=picture, user=user)
+        news = News(title=title, content=content, picture=picture, user=user, viewers=0)
         db.session.add(news)
         db.session.commit()
         return news
@@ -44,6 +45,13 @@ class News(db.Model):
     def delete(obj):
         db.session.delete(obj)
         db.session.commit()
+
+    @staticmethod
+    def view(news_id):
+        news = News.query.filter_by(id=news_id).first()
+        setattr(news, 'viewers', int(news.viewers) + 1)
+        db.session.commit()
+        return news_id
 
     @property
     def serialize(self):

@@ -8,7 +8,8 @@
             {{ news.content }}
         </div>
         <img src="{{ news.picture }}" class="card-img-top" alt="...">
-
+        <p>Количество просмотров: <img src="https://cdn.pixabay.com/photo/2015/12/22/04/00/eye-1103593_960_720.png" align="left" height="50" width="50"></p>
+        <h3>  {{ news.viewers }}  </h3>
         {% if user %}
         Автор: {{ user.username }}
         {% endif %}

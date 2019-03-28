@@ -39,6 +39,7 @@ def init_route(app, db):
     def install():
         db.create_all()
         Storage.add(0, 0)
+        User.add('admin', 'admin')
         return render_template(
             'install-success.html',
             title="Главная"
@@ -124,9 +125,10 @@ def init_route(app, db):
     @app.route('/news/<int:id>')
     def news_view(id: int):
         print(id)
+        news = News.query.filter_by(id=id).first()
+        news.view(news.id)
         if not auth.is_authorized():
             return redirect('/login')
-        news = News.query.filter_by(id=id).first()
         comments_list = Comments.query.filter_by(news_id=id)
         return render_template(
             'news-view.html',
