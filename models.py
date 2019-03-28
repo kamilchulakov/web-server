@@ -69,6 +69,7 @@ class Comments(db.Model):
     title = db.Column(db.String(80), unique=False, nullable=False)
     content = db.Column(db.String(80), unique=False, nullable=True)
     news_id = db.Column(db.Integer, db.ForeignKey('news.id'), nullable=False)
+    news = db.relationship('News', backref=db.backref('comments_list', lazy=True))
 
     def __repr__(self):
         return '<Comments {} {} {}>'.format(self.id, self.title, self.user_id)

@@ -173,7 +173,7 @@ def init_route(app, db):
         if auth.get_user().id != 1:
             abort(403)
         Comments.delete(comments)
-        return redirect('/')
+        return redirect('/news/{}'.format(comments.news_id))
 
     @app.route('/matches')
     def show_matches():
@@ -184,7 +184,8 @@ def init_route(app, db):
         if not auth.is_authorized() or not auth.get_user():
             return redirect('/login')
         form = ShopForm()
-        if any([form.scarves.data, form.hat.data]) != 0:
+        if any([form.scarves.data, form.hat.data, form.shirt.data, form.zna.data, form.passport.data
+                , form.rucksack.data, form.bre.data, form.flag.data, form.ball.data]) != 0:
             scarves = form.scarves.data
             hat = form.hat.data
             shirt = form.shirt.data
@@ -195,12 +196,19 @@ def init_route(app, db):
             flag = form.flag.data
             ball = form.ball.data
             st = Storage.query.filter_by(id=1).first()
-            if int(st.hat) >= hat and int(st.scarves) >= scarves:
+            if int(st.hat) >= hat and int(st.scarves) >= scarves and int(st.shirt) >= shirt \
+                    and int(st.zna) >= zna and int(st.passport) >= passport\
+                    and int(st.rucksack) >= rucksack and int(st.bre) >= bre\
+                    and int(st.flag) >= flag and int(st.ball) >= ball:
                 Orders.add(hat=hat, scarves=scarves,
                            shirt=shirt, zna=zna,
                            passport=passport, rucksack=rucksack,
                            bre=bre, flag=flag, ball=ball, user=auth.get_user())
                 orders = Orders.query.filter_by(hat=hat)[-1]
+                Storage.buy(int(orders.hat), int(orders.scarves),
+                    int(orders.shirt), int(orders.zna),
+                     int(orders.passport), int(orders.rucksack),
+                     int(orders.bre), int(orders.flag), int(orders.ball))
                 return redirect('/orders/{}'.format(orders.id))
             else:
                 return render_template(
@@ -245,10 +253,6 @@ def init_route(app, db):
         if auth.get_user().id != user.id:
             abort(403)
         orders.result = True
-        Storage.buy(int(orders.hat), int(orders.scarves),
-                    int(orders.shirt), int(orders.zna),
-                     int(orders.passport), int(orders.rucksack),
-                     int(orders.bre), int(orders.flag), int(orders.ball))
         db.session.commit()
         return render_template(
             'orders_pay.html',
