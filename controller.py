@@ -1,6 +1,6 @@
 from flask_restful import abort
 
-from flask import Flask, redirect, session, request
+from flask import redirect, request
 from flask import render_template as flask_render_template
 import extra.auth as auth
 from api.v1 import init as init_api_v1
@@ -99,7 +99,7 @@ def init_route(app, db):
     def view_last_match():
         return render_template(
             'last_match.html',
-                title="Последний матч"
+            title="Последний матч"
         )
 
     @app.route('/news/create', methods=['GET', 'POST'])
@@ -184,8 +184,8 @@ def init_route(app, db):
         if not auth.is_authorized() or not auth.get_user():
             return redirect('/login')
         form = ShopForm()
-        if any([form.scarves.data, form.hat.data, form.shirt.data, form.zna.data, form.passport.data
-                , form.rucksack.data, form.bre.data, form.flag.data, form.ball.data]) != 0:
+        if any([form.scarves.data, form.hat.data, form.shirt.data, form.zna.data, form.passport.data,
+                form.rucksack.data, form.bre.data, form.flag.data, form.ball.data]) != 0:
             scarves = form.scarves.data
             hat = form.hat.data
             shirt = form.shirt.data
@@ -206,9 +206,9 @@ def init_route(app, db):
                            bre=bre, flag=flag, ball=ball, user=auth.get_user())
                 orders = Orders.query.filter_by(hat=hat)[-1]
                 Storage.buy(int(orders.hat), int(orders.scarves),
-                    int(orders.shirt), int(orders.zna),
-                     int(orders.passport), int(orders.rucksack),
-                     int(orders.bre), int(orders.flag), int(orders.ball))
+                            int(orders.shirt), int(orders.zna),
+                            int(orders.passport), int(orders.rucksack),
+                            int(orders.bre), int(orders.flag), int(orders.ball))
                 return redirect('/orders/{}'.format(orders.id))
             else:
                 return render_template(
