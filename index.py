@@ -11,7 +11,6 @@ from flask_sqlalchemy import SQLAlchemy
 
 from controller import init_route
 from dbase import db
-from flask_recaptcha import ReCaptcha
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
