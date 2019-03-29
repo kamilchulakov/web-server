@@ -9,7 +9,7 @@
             {% for news in news_list %}
             <li><a href="/news/{{ news.id }}">{{news.title}} </a>
                 {% if auth_user and auth_user.id == 1 %}
-                (<a href="/news/delete/{{ news.id }}">удалить</a>)
+                <a href="/news/create" class="btn btn-outline-warning">Удалить</a>
                 {% endif %}
             </li>
             {% endfor %}
