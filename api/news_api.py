@@ -8,6 +8,7 @@ from models import News
 news_parser = reqparse.RequestParser()
 news_parser.add_argument('title', required=True)
 news_parser.add_argument('content', required=True)
+news_parser.add_argument('picture', required=True)
 
 
 class NewsListApi(Resource):
