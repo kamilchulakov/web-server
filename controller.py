@@ -1,12 +1,12 @@
 from flask_restful import abort
-
-from flask import Flask, redirect, session, request
+from datetime import datetime
+from flask import redirect, request
 from flask import render_template as flask_render_template
 import extra.auth as auth
 from api.v1 import init as init_api_v1
 from forms import *
 
-from models import User, News, Orders
+from models import User, News, Orders, Comments, Storage, Matches
 
 
 def init_route(app, db):
@@ -38,6 +38,8 @@ def init_route(app, db):
     @app.route('/install')
     def install():
         db.create_all()
+        Storage.add(0, 0, 0, 0, 0, 0, 0, 0, 0)
+        User.add('admin', 'admin')
         return render_template(
             'install-success.html',
             title="Главная"
@@ -92,6 +94,13 @@ def init_route(app, db):
             form=form,
             has_error=has_error
         )
+    
+    @app.route('/last_match')
+    def view_last_match():
+        return render_template(
+            'last_match.html',
+            title="Последний матч"
+        )
 
     @app.route('/news/create', methods=['GET', 'POST'])
     def news_create_form():
@@ -115,18 +124,35 @@ def init_route(app, db):
 
     @app.route('/news/<int:id>')
     def news_view(id: int):
+        print(id)
+        news = News.query.filter_by(id=id).first()
+        news.view(news.id)
         if not auth.is_authorized():
             return redirect('/login')
-        news = News.query.filter_by(id=id).first()
-        if not news:
-            abort(404)
-
-        user = news.user
+        comments_list = Comments.query.filter_by(news_id=id)
         return render_template(
             'news-view.html',
             title='Новость - ' + news.title,
             news=news,
-            user=user
+            user=news.user,
+            comments_list=comments_list
+        )
+
+    @app.route('/news/<int:news_id>/comment', methods=['GET', 'POST'])
+    def add_comment(news_id: int):
+        if not auth.is_authorized():
+            return redirect('/login')
+        form = CommentCreateForm()
+        if form.validate_on_submit():
+            title = form.title.data
+            content = form.content.data
+            Comments.add(title=title, content=content, news=news_id)
+            return redirect('/news/{}'.format(news_id))
+        return render_template(
+            'comment-create.html',
+            title='Создать новость',
+            form=form,
+            news_id=news_id
         )
 
     @app.route('/news/delete/<int:id>')
@@ -139,22 +165,64 @@ def init_route(app, db):
         News.delete(news)
         return redirect('/news')
 
+    @app.route('/comment/delete/<int:id>')
+    def comments_delete(id: int):
+        if not auth.is_authorized():
+            return redirect('/login')
+        comments = Comments.query.filter_by(id=id).first()
+        if auth.get_user().id != 1:
+            abort(403)
+        Comments.delete(comments)
+        return redirect('/news/{}'.format(comments.news_id))
+
     @app.route('/matches')
     def show_matches():
-        abort(403)
+        matches_list = Matches.query
+        now = ".".join([str(datetime.utcnow().day), str(datetime.utcnow().month), str(datetime.utcnow().year)])
+        return render_template(
+            'matches_list.html',
+            title='Мачти',
+            matches_list=matches_list,
+            now=now
+        )
 
     @app.route('/shop', methods=['GET', 'POST'])
     def make_shopping():
-        global z
-        if not auth.is_authorized():
+        if not auth.is_authorized() or not auth.get_user():
             return redirect('/login')
         form = ShopForm()
-        if any([form.scarves.data, form.hat.data]) != 0:
+        if any([form.scarves.data, form.hat.data, form.shirt.data, form.zna.data, form.passport.data,
+                form.rucksack.data, form.bre.data, form.flag.data, form.ball.data]) != 0:
             scarves = form.scarves.data
             hat = form.hat.data
-            Orders.add(hat=hat, scarve=scarves, user=auth.get_user())
-            orders = Orders.query.filter_by(hat=hat, scarve=scarves, user=auth.get_user()).first()
-            return redirect('/orders/{}'.format(orders.id))
+            shirt = form.shirt.data
+            zna = form.zna.data
+            passport = form.passport.data
+            rucksack = form.rucksack.data
+            bre = form.bre.data
+            flag = form.flag.data
+            ball = form.ball.data
+            st = Storage.query.filter_by(id=1).first()
+            if int(st.hat) >= hat and int(st.scarves) >= scarves and int(st.shirt) >= shirt \
+                    and int(st.zna) >= zna and int(st.passport) >= passport\
+                    and int(st.rucksack) >= rucksack and int(st.bre) >= bre\
+                    and int(st.flag) >= flag and int(st.ball) >= ball:
+                Orders.add(hat=hat, scarves=scarves,
+                           shirt=shirt, zna=zna,
+                           passport=passport, rucksack=rucksack,
+                           bre=bre, flag=flag, ball=ball, user=auth.get_user())
+                orders = Orders.query.filter_by(hat=hat)[-1]
+                Storage.buy(int(orders.hat), int(orders.scarves),
+                            int(orders.shirt), int(orders.zna),
+                            int(orders.passport), int(orders.rucksack),
+                            int(orders.bre), int(orders.flag), int(orders.ball))
+                return redirect('/orders/{}'.format(orders.id))
+            else:
+                return render_template(
+                    'shop.html',
+                    title="Магазин",
+                    form=form,
+                    alert=True)
         return render_template(
             'shop.html',
             title="Магазин",
@@ -162,18 +230,20 @@ def init_route(app, db):
 
     @app.route('/orders/<int:id>')
     def orders_view(id: int):
-        if not auth.is_authorized():
-            return redirect('/login')
-
         orders = Orders.query.filter_by(id=id).first()
         user = orders.user
-        if auth.get_user().id != user.id:
-            abort(403)
+        data = {"Шарфы": orders.scarves, "Шапки": orders.hat,
+                "Футболки": orders.shirt, "Значки": orders.zna,
+                "Обложки": orders.passport, "Рюкзак": orders.rucksack,
+                "Брелки": orders.bre, "Флаги": orders.flag,
+                "Мячи": orders.ball}
+
         return render_template(
             'orders_view.html',
             title='Заказ № ' + str(orders.id),
             orders=orders,
-            user=user
+            user=user,
+            data=data
         )
 
     @app.route('/pay/<int:id>')
@@ -194,5 +264,76 @@ def init_route(app, db):
 
     @app.route('/about')
     def about():
-       return render_template(
+        return render_template(
             'about.html')
+
+    @app.route('/storage/<int:hats>&<int:scarves>&<int:shirt>&<int:zna>&<int:passport>&<int:rucksack>&<int:bre>&<int:flag>&<int:ball>')
+    def add_values(hats: int, scarves: int, shirt: int,
+                   zna: int, passport: int, rucksack: int,
+                   bre: int, flag: int, ball: int):
+        Storage.get(hats, scarves, shirt, zna, passport, rucksack, bre, flag, ball)
+        return render_template(
+            'install-success.html',
+            title="Главная"
+        )
+
+    @app.route('/storage_add', methods=['GET', 'POST'])
+    def storage_add():
+        if auth.get_user().id != 1:
+            abort(403)
+        form = ShopForm()
+        if any([form.scarves.data, form.hat.data, form.shirt.data, form.zna.data, form.passport.data,
+                form.rucksack.data, form.bre.data, form.flag.data, form.ball.data]) != 0:
+            scarves = form.scarves.data
+            hat = form.hat.data
+            shirt = form.shirt.data
+            zna = form.zna.data
+            passport = form.passport.data
+            rucksack = form.rucksack.data
+            bre = form.bre.data
+            flag = form.flag.data
+            ball = form.ball.data
+            Storage.get(int(hat), int(scarves),
+                        int(shirt), int(zna),
+                        int(passport), int(rucksack),
+                        int(bre), int(flag), int(ball))
+            return render_template(
+                'install-success.html',
+                title="Успешно")
+        return render_template(
+            'storage_add.html',
+            title="Магазин",
+            form=form)
+
+    @app.route('/storage')
+    def storage_info():
+        st = Storage.query.filter_by(id=1).first()
+        keys = "Шапки, Шарфы, Футболки, Значки, Обложки, Рюкзаки, Брелки, Флаги, Мячи".split(', ')
+        values = [st.hat, st.scarves, st.shirt, st.zna, st.passport, st.rucksack, st.bre, st.flag, st.ball]
+        return render_template(
+            "storage_info.html",
+            title="Склад",
+            keys=keys,
+            values=values
+        )
+
+    @app.route('/add_match/<data>/<time>/<team1>/<team2>')
+    def add_match(data, time, team1, team2):
+        if auth.get_user().id != 1:
+            abort(403)
+        Matches.add(team1, team2, data, time)
+        return render_template(
+            'install-success.html',
+            title="Главная"
+        )
+
+    @app.route('/delete_match/<data>')
+    def del_match(data):
+        obj = Matches.query.filter_by(data=data).first()
+        Matches.delete(obj)
+        return render_template(
+            'install-success.html',
+            title="Главная"
+        )
+
+

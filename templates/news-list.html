@@ -1,25 +1,25 @@
 {% extends "__base_template.html" %}
 
 {% block content %}
-<div class="card">
-    <div class="card-body">
-        <h5 class="card-title">Наши новости</h5>
-        {% if news_list  %}
-        <ul class="card-text">
-            {% for news in news_list %}
-            <li><a href="/news/{{ news.id }}">{{news.title}} </a>
-                {% if auth_user and auth_user.id == 1 %}
-                <a href="/news/create" class="btn btn-outline-warning">Удалить</a>
-                {% endif %}
-            </li>
-            {% endfor %}
-        </ul>
-        {% else %}
-        Новостей пока нет
-        {% endif %}
-        {% if auth_user.id == 1 %}
-        <a href="/news/create" class="btn btn-outline-primary">Добавить новость</a>
-        {% endif %}
-    </div>
+{% if news_list %}
+<h1>Наши новости</h1>
+{% for new in news_list %}
+<div class="card" style="width: 18rem;">
+  <img src='{{ new.picture }}' class="card-img-top" alt="">
+  <div class="card-body">
+    <h5 class="card-title">{{ new.title }}</h5>
+    <p class="card-text">Нажмите посмотреть подробнее, если хотите прочитать новость</p>
+    <a href="/news/{{ new.id }}" class="btn btn-primary">Посмотреть подробнее</a>
+  </div>
+    {% if auth_user and auth_user.id == 1 %}
+    <a href="/news/delete/{{ new.id }}">Удалить</a>
+    {% endif %}
 </div>
+{% endfor %}
+{% else %}
+<h1>Новостей пока нет</h1>
+{% endif %}
+{% if auth_user.id == 1 %}
+<a href="/news/create" class="card-link">СОЗДАТЬ</a>
+{% endif %}
 {% endblock %}

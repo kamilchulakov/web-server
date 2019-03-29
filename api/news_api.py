@@ -8,6 +8,7 @@ from models import News
 news_parser = reqparse.RequestParser()
 news_parser.add_argument('title', required=True)
 news_parser.add_argument('content', required=True)
+news_parser.add_argument('picture', required=True)
 
 
 class NewsListApi(Resource):
@@ -23,7 +24,7 @@ class NewsListApi(Resource):
         if not self._auth.is_authorized():
             abort(401)
         args = news_parser.parse_args()
-        news = News.add(args['title'], args['content'], self._auth.get_user())
+        news = News.add(args['title'], args['content'], args['picture'], self._auth.get_user())
         return jsonify(news.serialize)
 
 

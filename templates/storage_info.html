@@ -1,0 +1,22 @@
+{% extends "__base_template.html" %}
+
+{% block content %}
+<form
+        action="/shop"
+        method="post"
+        enctype="multipart/form-data"
+        class="card"
+>
+    <h3>На складе имеются товары:</h3>
+    {% for i in range(9) %}
+    <div class="form-inline">
+        <div class="form-group">
+            <table><tr><td>{{ keys[i] }} в количестве </td>
+                <td><a style="color: green">{{ values[i] }}</a></td>
+            </tr>
+            </table>
+        </div>
+    </div>
+    {% endfor %}
+</form>
+{% endblock %}

@@ -2,15 +2,10 @@
 
 {% block content %}
 
-<h1>Наши товары не подлежат обмену или возврату.</h1>
-<h1>Выбери товары</h1>
-{% if alert %}
-<div class="alert alert-warning" role="alert">
-  На складе недостаточно товаров. Введите меньшее количество!
-</div>
-{% endif %}
+<h1>Какие сегодня поставки???</h1>
+
 <form
-        action="/shop"
+        action="/storage_add"
         method="post"
         enctype="multipart/form-data"
         class="card"
