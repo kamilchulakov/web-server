@@ -1,0 +1,17 @@
+{% extends "__base_template.html" %}
+
+{% block content %}
+{% if matches_list %}
+<h1>Ближайшие матчи</h1>
+{% for match in matches_list %}
+<div class="card" style="width: 50rem;">
+  <div class="card-body">
+      <p class="card-text"> <b>{{ match.team1 }}</b> против <b>{{ match.team2 }}</b></p>
+      <em> {{ match.time }} </em>
+      <em> {{ match.data }} </em>
+      <p style="color:red">Сегодня {{ now }}</p>
+  </div>
+</div>
+{% endfor %}
+{% endif %}
+{% endblock %}

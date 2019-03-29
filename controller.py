@@ -1,12 +1,12 @@
 from flask_restful import abort
-
+from datetime import datetime
 from flask import redirect, request
 from flask import render_template as flask_render_template
 import extra.auth as auth
 from api.v1 import init as init_api_v1
 from forms import *
 
-from models import User, News, Orders, Comments, Storage
+from models import User, News, Orders, Comments, Storage, Matches
 
 
 def init_route(app, db):
@@ -177,7 +177,14 @@ def init_route(app, db):
 
     @app.route('/matches')
     def show_matches():
-        return 'Матчи будут скоро добавлены'
+        matches_list = Matches.query
+        now = ".".join([str(datetime.utcnow().day), str(datetime.utcnow().month), str(datetime.utcnow().year)])
+        return render_template(
+            'matches_list.html',
+            title='Мачти',
+            matches_list=matches_list,
+            now=now
+        )
 
     @app.route('/shop', methods=['GET', 'POST'])
     def make_shopping():
@@ -273,4 +280,22 @@ def init_route(app, db):
             'install-success.html',
             title="Главная"
         )
+
+    @app.route('/add_match/<data>/<time>/<team1>/<team2>')
+    def add_match(data, time, team1, team2):
+        Matches.add(team1, team2, data, time)
+        return render_template(
+            'install-success.html',
+            title="Главная"
+        )
+
+    @app.route('/delete_match/<data>')
+    def del_match(data):
+        obj = Matches.query.filter_by(data=data).first()
+        Matches.delete(obj)
+        return render_template(
+            'install-success.html',
+            title="Главная"
+        )
+
 

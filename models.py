@@ -100,16 +100,15 @@ class Matches(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     team1 = db.Column(db.String(80), unique=False, nullable=False)
     team2 = db.Column(db.String(80), unique=False, nullable=False)
-    tournament = db.Column(db.String(80), unique=False, nullable=False)
     data = db.Column(db.String(80), unique=False, nullable=False)
-    result = db.Column(db.String(80), unique=False, nullable=False)
+    time = db.Column(db.String(80), unique=False, nullable=False)
 
     def __repr__(self):
         return '<Matches {} {} {}>'.format(self.id, self.team1, self.team2)
 
     @staticmethod
-    def add(title, content, user):
-        news = News(title=title, content=content, user=user)
+    def add(team1, team2, data, time):
+        news = Matches(team1=team1, team2=team2, data=data, time=time)
         db.session.add(news)
         db.session.commit()
         return news
@@ -124,9 +123,10 @@ class Matches(db.Model):
         """Return object data in easily serializable format"""
         return {
             'id': self.id,
-            'title': self.title,
-            'content': self.content,
-            'user_id': self.user_id
+            'team1': self.team1,
+            'team2': self.team2,
+            'data': self.data,
+            "time": self.time
         }
 
 
