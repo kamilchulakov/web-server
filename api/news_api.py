@@ -24,7 +24,7 @@ class NewsListApi(Resource):
         if not self._auth.is_authorized():
             abort(401)
         args = news_parser.parse_args()
-        news = News.add(args['title'], args['content'], self._auth.get_user())
+        news = News.add(args['title'], args['content'], args['picture'], self._auth.get_user())
         return jsonify(news.serialize)
 
 
